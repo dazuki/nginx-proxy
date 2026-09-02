@@ -1,0 +1,17 @@
+# Template for a new reverse proxy.
+# Copy to <name>.conf, edit server_name + proxy_pass, then ./reload.sh
+#
+# upstream address options:
+#   http://host.containers.internal:8080   service on the podman host
+#   http://10.0.0.12:8080                  service on another machine
+#   http://some-container:8080             container on a shared podman network
+
+server {
+    listen 80;
+    server_name app.example.com;
+
+    location / {
+        include /etc/nginx/snippets/proxy.conf;
+        proxy_pass http://host.containers.internal:8080;
+    }
+}
