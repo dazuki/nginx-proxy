@@ -1,0 +1,16 @@
+# Template for a path-prefix proxy on the catch-all server (bare IP, no DNS).
+# Copy to <name>.conf, edit the prefix and upstream, then ./reload.sh
+#
+# The trailing slash on proxy_pass strips the prefix, so /myapp/foo reaches
+# the upstream as /foo. Drop it to pass the path through unchanged.
+#
+# For a service with its own hostname, use ../example.conf.disabled instead.
+
+location = /myapp {
+    return 308 /myapp/;
+}
+
+location /myapp/ {
+    include /etc/nginx/snippets/proxy.conf;
+    proxy_pass http://myapp-container:8080/;
+}
