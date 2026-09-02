@@ -5,13 +5,10 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-    # ,z relabels for SELinux (no-op on hosts without it)
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro,z
       - ./nginx/snippets:/etc/nginx/snippets:ro,z
       - ./logs:/var/log/nginx:z
-    # podman injects host.containers.internal by itself; this adds the docker
-    # spelling too so either name works in an upstream config
     extra_hosts:
       - "host.docker.internal:host-gateway"
     # Upstream containers join this too, so they can be reached by container

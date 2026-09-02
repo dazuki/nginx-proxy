@@ -1,10 +1,9 @@
-# Template for a path-prefix proxy on the catch-all server (bare IP, no DNS).
-# Copy to <name>.conf, edit the prefix and upstream, then ./reload.sh
+# Drop-in for the standalone nginx-proxy stack.
+# Copy to its nginx/conf.d/locations/myapp.conf and run ./reload.sh.
 #
-# The trailing slash on proxy_pass strips the prefix, so /myapp/foo reaches
-# the upstream as /foo. Drop it to pass the path through unchanged.
-#
-# For a service with its own hostname, use ../example.conf.disabled instead.
+# Reached over the shared `mcp-net` podman network by container name, so this
+# MCP publishes no host port. The trailing slash on proxy_pass strips the
+# prefix: /myapp/mcp arrives upstream as /mcp, which is MCP_PATH.
 
 location = /myapp {
     return 308 /myapp/;
@@ -12,5 +11,6 @@ location = /myapp {
 
 location /myapp/ {
     include /etc/nginx/snippets/proxy.conf;
+    # include /etc/nginx/snippets/proxy-sse.conf; - MCP streamable HTTP
     proxy_pass http://myapp-container:8080/;
 }
