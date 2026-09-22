@@ -4,3 +4,4 @@ logs/
 
 # Site configs are local; only the example template is tracked
 nginx/conf.d/locations/*.conf
+*.pem
