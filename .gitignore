@@ -3,3 +3,10 @@ logs/
 
 # Site configs are local; only the example template is tracked
 nginx/conf.d/locations/*.conf
+
+# Enabled on the server by copying 10-https.conf.disabled
+nginx/conf.d/10-https.conf
+
+# Certs and keys never go in git
+nginx/ssl/*
+!nginx/ssl/.gitkeep

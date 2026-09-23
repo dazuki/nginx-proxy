@@ -4,12 +4,19 @@
 # Reached over the shared `mcp-net` podman network by container name, so this
 # MCP publishes no host port. The trailing slash on proxy_pass strips the
 # prefix: /myapp/mcp arrives upstream as /mcp, which is MCP_PATH.
+#
+# Served on both :80 and :443 (once 10-https.conf is enabled). Nothing extra
+# is needed for HTTPS; uncomment the `if` below only to refuse plain HTTP.
 
 location = /myapp {
     return 308 /myapp/;
 }
 
 location /myapp/ {
+    # HTTPS only. 308, not 301: keeps POST as POST. Browsers cache 308 too, so
+    # use 307 while testing.
+    # if ($scheme = http) { return 308 https://$host$request_uri; }
+
     include /etc/nginx/snippets/proxy.conf;
     # include /etc/nginx/snippets/proxy-sse.conf; - MCP streamable HTTP
     proxy_pass http://myapp-container:8080/;

@@ -5,15 +5,14 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro,z
       - ./nginx/snippets:/etc/nginx/snippets:ro,z
+      - ./nginx/ssl:/etc/nginx/ssl:ro,z
       - ./logs:/var/log/nginx:z
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # Upstream containers join this too, so they can be reached by container
-    # name without publishing a host port. Create it once:
-    #   podman network create mcp-net
     networks:
       - mcp-net
     healthcheck:
