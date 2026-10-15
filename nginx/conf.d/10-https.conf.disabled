@@ -1,23 +1,16 @@
-# HTTPS listener. Disabled until a cert exists: nginx refuses to start if a
-# cert file is missing. To enable:
-#
-#   cp <leaf + intermediate> nginx/ssl/fullchain.pem    (see README: HTTPS)
-#   cp <key>        nginx/ssl/privkey.pem
-#   cp nginx/conf.d/10-https.conf.disabled nginx/conf.d/10-https.conf
-#   ./reload.sh
-#
-# Serves the same locations/ drop-ins as port 80, so services need no changes.
-# Port 80 keeps working (no redirect); a drop-in can force HTTPS on its own,
-# see locations/example.conf.disabled.
-
 server {
     listen 443 ssl default_server;
     server_name _;
 
     absolute_redirect off;
 
+    # { cat /etc/ssl/certs/star_<domain>_se.crt; echo; cat /etc/ssl/certs/DigiCertCA.crt; } > nginx/ssl/fullchain.pem
     ssl_certificate     /etc/nginx/ssl/fullchain.pem;
     ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+
+    # ssl_certificate         /etc/nginx/ssl/star_<domain>_se.crt;
+    # ssl_trusted_certificate /etc/nginx/ssl/DigiCertCA.crt;
+
     ssl_protocols       TLSv1.2 TLSv1.3;
 
     location = /healthz {
@@ -31,26 +24,3 @@ server {
         return 444;
     }
 }
-
-#server {
-#    listen 443 ssl default_server;
-#    server_name _;
-#
-#    absolute_redirect off;
-#
-#    ssl_certificate     /etc/nginx/ssl/star_domain_se.crt;
-#    ssl_certificate_key /etc/nginx/ssl/private.key;
-#    ssl_trusted_certificate /etc/nginx/ssl/DigiCertCA.crt;
-#    ssl_protocols       TLSv1.2 TLSv1.3;
-#
-#    location = /healthz {
-#        access_log off;
-#        return 200 "ok\n";
-#    }
-#
-#    include /etc/nginx/conf.d/locations/*.conf;
-#
-#    location / {
-#        return 444;
-#    }
-#}
