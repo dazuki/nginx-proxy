@@ -10,3 +10,6 @@ nginx/conf.d/10-https.conf
 # Certs and keys never go in git
 nginx/ssl/*
 !nginx/ssl/.gitkeep
+nginx/certs/
+*.key
+*.pfx
