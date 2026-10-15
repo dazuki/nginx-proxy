@@ -9,7 +9,7 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro,z
       - ./nginx/snippets:/etc/nginx/snippets:ro,z
-      - ./nginx/ssl:/etc/nginx/ssl:ro,z
+      - /etc/ssl/certs:/etc/nginx/ssl:ro,z
       - ./logs:/var/log/nginx:z
     extra_hosts:
       - "host.docker.internal:host-gateway"

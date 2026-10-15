@@ -1,0 +1,9 @@
+ 
+location = /sympy {
+    return 308 /sympy/;
+}
+
+location /sympy/ {
+    include /etc/nginx/snippets/proxy-sse.conf;
+    proxy_pass http://sympy-mcp:8081/;
+}
