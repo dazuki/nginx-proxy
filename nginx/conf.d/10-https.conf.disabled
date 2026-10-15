@@ -31,3 +31,26 @@ server {
         return 444;
     }
 }
+
+#server {
+#    listen 443 ssl default_server;
+#    server_name _;
+#
+#    absolute_redirect off;
+#
+#    ssl_certificate     /etc/nginx/ssl/star_domain_se.crt;
+#    ssl_certificate_key /etc/nginx/ssl/private.key;
+#    ssl_trusted_certificate /etc/nginx/ssl/DigiCertCA.crt;
+#    ssl_protocols       TLSv1.2 TLSv1.3;
+#
+#    location = /healthz {
+#        access_log off;
+#        return 200 "ok\n";
+#    }
+#
+#    include /etc/nginx/conf.d/locations/*.conf;
+#
+#    location / {
+#        return 444;
+#    }
+#}
