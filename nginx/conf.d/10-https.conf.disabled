@@ -1,7 +1,7 @@
 # HTTPS listener. Disabled until a cert exists: nginx refuses to start if a
 # cert file is missing. To enable:
 #
-#   cp <cert chain> nginx/ssl/fullchain.pem
+#   cp <leaf + intermediate> nginx/ssl/fullchain.pem    (see README: HTTPS)
 #   cp <key>        nginx/ssl/privkey.pem
 #   cp nginx/conf.d/10-https.conf.disabled nginx/conf.d/10-https.conf
 #   ./reload.sh

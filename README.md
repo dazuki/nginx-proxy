@@ -72,22 +72,37 @@ The upstream container must be running on `mcp-net` before nginx starts or reloa
 
 ## HTTPS
 
-Port 443 is published but off until a cert exists. Enable on the server:
+Port 443 is published but off until a cert exists. Enable (also used for renewal):
 
 ```sh
-cp <cert chain> nginx/ssl/fullchain.pem
-cp <key>        nginx/ssl/privkey.pem
+# leaf first, then intermediate, no root
+{ cat <leaf>.crt; echo; cat <intermediate>.crt; } > nginx/ssl/fullchain.pem
+cp <key> nginx/ssl/privkey.pem && chmod 600 nginx/ssl/privkey.pem
 cp nginx/conf.d/10-https.conf.disabled nginx/conf.d/10-https.conf
 ./reload.sh
 ```
 
-All drop-ins are then served on both ports. To make one service HTTPS only, add inside its `location`:
+Verify:
 
-```nginx
-if ($scheme = http) { return 308 https://$host$request_uri; }    # 307 while testing
+```sh
+# order: leaf, then issuer
+openssl crl2pkcs7 -nocrl -certfile nginx/ssl/fullchain.pem | openssl pkcs7 -print_certs -noout
+# key matches cert: identical hashes
+openssl x509 -in nginx/ssl/fullchain.pem -noout -pubkey | openssl sha256
+openssl pkey -in nginx/ssl/privkey.pem -pubout | openssl sha256
+# served chain: "Verify return code: 0 (ok)"
+openssl s_client -connect <host>:443 -servername <host> </dev/null 2>/dev/null | grep "Verify return"
 ```
 
-Use 308, not 301 (301 turns POST into GET). Renew by overwriting the cert files and running `./reload.sh`.
+- Browsers hide a missing intermediate; server-side clients (MCP, scripts) fail. Test with `openssl`/`curl`.
+- `ssl_trusted_certificate` is not sent to clients and does not complete the chain.
+- Certs go in `nginx/ssl/` only. Not `/etc/ssl/certs` (system CA store), never in git.
+
+All drop-ins are served on both ports. HTTPS only for one service, inside its `location`:
+
+```nginx
+if ($scheme = http) { return 308 https://$host$request_uri; }    # 307 while testing, never 301
+```
 
 ## Server setup
 
