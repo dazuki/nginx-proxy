@@ -2,7 +2,8 @@ logs/
 !logs/.gitkeep
 
 # Site configs are local; only the example template is tracked
-nginx/conf.d/locations/*.conf
+nginx/conf.d/locations/*
+!nginx/conf.d/locations/example.conf.disabled
 
 # Enabled on the server by copying 10-https.conf.disabled
 nginx/conf.d/10-https.conf
@@ -13,3 +14,4 @@ nginx/ssl/*
 nginx/certs/
 *.key
 *.pfx
+*.pem
